@@ -1,5 +1,5 @@
 
-/* 구버전 파일시스템 데이터모델 */
+/* 구버전 파일시스템 데이터모델 */ //entity대신
 // export interface Board {
 //     id?: string;
 //     title: string;

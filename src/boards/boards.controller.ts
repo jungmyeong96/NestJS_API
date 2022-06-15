@@ -1,8 +1,9 @@
-import { Controller, Body, Get, Post, Param, Delete, Patch, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Controller, Body, Get, Post, Param, Delete, Patch, UsePipes, ValidationPipe, ParseIntPipe } from '@nestjs/common';
 import { BoardsService } from './boards.service';
 import { BoardStatus } from './board-status.enum';
 import { CreateBoardDto } from './dto/create-board.dto';
 import { BoardStatusValidationPipe } from './pipes/board-status-validation.pipe';
+import { Board } from './board.entity';
 
 
 @Controller('boards')
@@ -13,7 +14,37 @@ export class BoardsController {
     //  constructor(boardsService: BoardsService) {
     //     this.boardsService = boardsService;
     // }
-    constructor(private boardsService: BoardsService) {}
+    constructor(private boardsService: BoardsService) {} //종속성 주입 서비스를 사용하기위함 private로 선언하면 controller에서 사용갸능
+    
+    @Get('/:id')
+    getBoardById(@Param('id') id:number) : Promise<Board> {
+        return this.boardsService.getBoardById(id);
+    }
+
+    @Get()
+    getAllBoard(): Promise<Board[]> {
+        return this.boardsService.getAllBoard();
+    }
+
+    @Post()
+    @UsePipes(ValidationPipe)
+    createBoard(@Body() createBoard: CreateBoardDto): Promise<Board> {
+        return this.boardsService.createBoard(createBoard);
+    }
+
+    @Delete('/:id')
+    deleteBoard(@Param('id', ParseIntPipe) id: number): Promise<void> {
+        return this.boardsService.deleteBoard(id);
+    }
+
+    @Patch('/:id/status')
+    updateBoardStatus(
+        @Param('id', ParseIntPipe) id: number,
+        @Body('status', BoardStatusValidationPipe) status: BoardStatus
+    ): Promise<Board> {
+        return this.boardsService.updateBoardStatus(id, status);
+    }
+    
 
     /* 파일시스템 라우터 */
     // @Get('/')
