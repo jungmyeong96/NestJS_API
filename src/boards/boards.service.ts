@@ -11,13 +11,16 @@ export class BoardsService {
     getAllBoards(): Board[] {
         return this.boards;
     }
+    getBoardById(id: string): Board {
+        return this.boards.find((board) => board.id === id);
+    }
 
     /* Create */
     createBoard(creadBoardDto: CreateBoardDto): Board {
         //const title = creadBoardDto.title;
         //const description = creadBoardDto.description;
         const { title, description } = creadBoardDto;
-        
+
         const board : Board = {//Typescript에서는 key/value값이 같을 경우 value생략가능
             id: uuid(), //유니크한 값 생성가능
             title: title,
@@ -29,5 +32,15 @@ export class BoardsService {
         return board; //어떤 정보인지 찍어주기위해 값을 리턴
     }
 
-    /* */
+    /* Delete */
+    deleteBoard(id: string): void {
+        this.boards = this.boards.filter((board) => board.id !== id);
+    }
+
+    /* Update */
+    updateBoardStatus(id: string, status: BoardStatus): Board {
+        const board = this.getBoardById(id);
+        board.status = status;
+        return board;
+    }
 }

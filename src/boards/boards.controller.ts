@@ -1,7 +1,8 @@
-import { Controller, Body, Get, Post } from '@nestjs/common';
+import { Controller, Body, Get, Post, Param, Delete, Patch, UsePipes, ValidationPipe } from '@nestjs/common';
 import { BoardsService } from './boards.service';
-import { Board } from './board.model';
+import { Board, BoardStatus } from './board.model';
 import { CreateBoardDto } from './dto/create-board.dto';
+
 
 @Controller('boards')
 export class BoardsController {
@@ -18,10 +19,28 @@ export class BoardsController {
         return this.boardsService.getAllBoards();
     }
 
-    @Post() 
-    createBoard(
-        @Body() creadBoardDto: CreateBoardDto //데이터 처리를 간편하게 하기위해 객체(DTO) 전달
-    ): Board { //NestJS에서는 @Body body를 통해 데이터를 가져옴 하나의 데이터를 찾으려면 @Body(key)
-        return this.boardsService.createBoard(creadBoardDto)
+    @Get('/:id') //쿼리구문을 파싱하기 위해 Param을 사용
+    getBoardById(@Param('id') id: string): Board {
+        return this.boardsService.getBoardById(id);
+    }
+
+    @Post()
+    @UsePipes(ValidationPipe) //핸들러 레벨 유효성체크(빌트인)
+    createBoard(@Body() createBoardDto: CreateBoardDto): Board {
+        return this.boardsService.createBoard(createBoardDto);
+    }
+
+    @Delete('/:id')
+    deleteBoard(@Param('id') id: string): void {
+        this.boardsService.deleteBoard(id);
+    }
+
+    @Patch('/:id/:status') // 특정 id
+    updateBoardStatus(
+        @Param('id') id: string,
+        @Body('status') status: BoardStatus
+    ) {
+        console.log("doyunz");
+        return this.boardsService.updateBoardStatus(id, status)
     }
 }
